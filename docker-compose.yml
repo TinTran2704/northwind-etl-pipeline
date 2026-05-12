@@ -35,7 +35,9 @@ x-airflow-common: &airflow-common
 services:
 
   postgres:
-    image: postgres:16-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     container_name: etl_postgres
     restart: unless-stopped
     environment:
@@ -50,7 +52,7 @@ services:
       AIRFLOW_DB_PASSWORD: ${AIRFLOW_DB_PASSWORD}
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./config/postgres/init-databases.sh:/docker-entrypoint-initdb.d/01-init-databases.sh:ro
+      - ./config/postgres:/docker-entrypoint-initdb.d:ro
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     networks: [etl_net]

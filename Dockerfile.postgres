@@ -1,0 +1,7 @@
+FROM postgres:16-alpine
+
+# Fix Windows CRLF line endings trước khi copy
+COPY config/postgres/init-databases.sh /tmp/init-databases.sh
+RUN sed -i 's/\r//' /tmp/init-databases.sh \
+    && chmod +x /tmp/init-databases.sh \
+    && mv /tmp/init-databases.sh /docker-entrypoint-initdb.d/init-databases.sh
