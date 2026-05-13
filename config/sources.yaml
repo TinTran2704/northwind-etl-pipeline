@@ -1,0 +1,29 @@
+# config/sources.yaml
+# Source system definitions for the Northwind ETL pipeline.
+# See docs/02-data-sources.md for full specification.
+
+sources:
+  northwind:
+    type: http_csv
+    base_url: "https://raw.githubusercontent.com/graphql-compose/graphql-compose-examples/master/examples/northwind/data/csv"
+    files:
+      - customers.csv
+      - orders.csv
+      - order-details.csv
+      - products.csv
+      - categories.csv
+      - suppliers.csv
+      - employees.csv
+      - shippers.csv
+    target_dir: "data/raw/northwind"
+    encoding: utf-8
+
+  countries:
+    type: rest_json
+    url: "https://restcountries.com/v3.1/all?fields=name,cca2,region,subregion,currencies"
+    target_dir: "data/raw/countries"
+
+  exchange_rate:
+    type: rest_json
+    url: "https://open.er-api.com/v6/latest/USD"
+    target_dir: "data/raw/exchange_rate"
