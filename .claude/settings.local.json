@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\TinTran\\\\Project\\\\northwind-etl-pipeline\" -Recurse -Name | Where-Object { $_ -notmatch \"\\\\.git\" } | Sort-Object)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\TinTran\\\\Project\\\\northwind-etl-pipeline\" -Exclude \".venv\",\".git\" | ForEach-Object { $_.Name })",
+      "Bash(py --version)"
+    ]
+  }
+}

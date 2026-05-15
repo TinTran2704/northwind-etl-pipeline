@@ -1,0 +1,59 @@
+# config/quality_rules.yaml
+# Data Quality rules for the Clean phase (Kimball Subsystem #4).
+# See docs/06-clean-phase.md §6.5.
+
+screens:
+  customers:
+    column_property:
+      - { column: CustomerID,   rule: not_null,       severity: FATAL }
+      - { column: CustomerID,   rule: max_length,     value: 5,   severity: ERROR }
+      - { column: CompanyName,  rule: not_null,       severity: ERROR }
+      - { column: Country,      rule: not_null,       severity: WARN }
+      - { column: PostalCode,   rule: regex,          pattern: '^[A-Za-z0-9 \-]+$', severity: WARN }
+    data_rule:
+      - { name: postal_country_consistency, postal_column: PostalCode, country_column: Country, severity: WARN }
+    reasonability:
+      - { metric: row_count, baseline: 91, tolerance_pct: 20, severity: WARN }
+
+  orders:
+    column_property:
+      - { column: OrderID,    rule: not_null,       severity: FATAL }
+      - { column: OrderID,    rule: unique,         severity: FATAL }
+      - { column: OrderDate,  rule: date_range,     min: '1990-01-01', max: 'today', severity: ERROR }
+      - { column: Freight,    rule: numeric_range,  min: 0, max: 99999, severity: WARN }
+    structure:
+      - { column: CustomerID, references: customers.CustomerID, severity: ERROR }
+      - { column: EmployeeID, references: employees.EmployeeID, severity: ERROR }
+    reasonability:
+      - { metric: row_count, baseline: 830, tolerance_pct: 20, severity: WARN }
+
+  order-details:
+    column_property:
+      - { column: OrderID,    rule: not_null,       severity: FATAL }
+      - { column: ProductID,  rule: not_null,       severity: FATAL }
+      - { column: Quantity,   rule: numeric_range,  min: 1,   max: 1000,  severity: ERROR }
+      - { column: UnitPrice,  rule: numeric_range,  min: 0,   max: 99999, severity: ERROR }
+      - { column: Discount,   rule: numeric_range,  min: 0.0, max: 1.0,   severity: ERROR }
+
+  products:
+    column_property:
+      - { column: ProductID,   rule: not_null,       severity: FATAL }
+      - { column: ProductName, rule: not_null,       severity: ERROR }
+      - { column: UnitPrice,   rule: numeric_range,  min: 0, max: 99999, severity: WARN }
+
+  employees:
+    column_property:
+      - { column: EmployeeID, rule: not_null,  severity: FATAL }
+      - { column: EmployeeID, rule: unique,    severity: FATAL }
+      - { column: LastName,   rule: not_null,  severity: ERROR }
+      - { column: HireDate,   rule: date_range, min: '1900-01-01', max: 'today', severity: WARN }
+
+  suppliers:
+    column_property:
+      - { column: SupplierID,  rule: not_null, severity: FATAL }
+      - { column: CompanyName, rule: not_null, severity: ERROR }
+
+  categories:
+    column_property:
+      - { column: CategoryID,   rule: not_null, severity: FATAL }
+      - { column: CategoryName, rule: not_null, severity: ERROR }
