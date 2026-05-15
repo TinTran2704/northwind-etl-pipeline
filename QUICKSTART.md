@@ -23,7 +23,7 @@ Docker sẽ pull các images (~2GB lần đầu). Uống cà phê ☕
 
 | Service | URL | Login |
 |---|---|---|
-| **pgAdmin** (quản lý database) | http://localhost:5050 | admin@etl.local / admin |
+| **pgAdmin** (quản lý database) | http://localhost:5050 | ${AIRFLOW_ADMIN_EMAIL} / admin |
 | **Airflow** (orchestrator) | http://localhost:8080 | admin / admin |
 
 ## Bước 3 — Chạy ETL pipeline
