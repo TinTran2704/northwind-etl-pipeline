@@ -1,0 +1,46 @@
+# Per-entity column standardization rules.
+# Applied by Standardizer.standardize_df(df, entity_name).
+# Column names match the raw CSV headers (lowercase camelCase).
+
+entities:
+  customers:
+    - column: country
+      transform: standardize_country
+      output_column: country_code
+    - column: city
+      transform: title_case
+    - column: companyName
+      transform: title_case
+    - column: phone
+      transform: standardize_phone
+      country_column: country_code
+
+  employees:
+    - column: country
+      transform: standardize_country
+      output_column: country_code
+    - column: city
+      transform: title_case
+
+  suppliers:
+    - column: country
+      transform: standardize_country
+      output_column: country_code
+    - column: city
+      transform: title_case
+    - column: companyName
+      transform: title_case
+
+  products:
+    []
+
+  orders:
+    - column: shipCountry
+      transform: standardize_country
+      output_column: ship_country_code
+
+  shippers:
+    []
+
+  categories:
+    []

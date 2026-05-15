@@ -1,0 +1,53 @@
+# Survivorship rules per entity.
+# Applied by SurvivorSelector when a cluster has > 1 record.
+# Rules: longest_non_null | most_recent | prefer_source
+#
+# longest_non_null : picks the non-null value with the most characters.
+# most_recent      : picks from the record with the latest _extract_ts column.
+# prefer_source    : picks from the record whose _source column matches
+#                    the first entry in the priority list.
+
+customers:
+  companyName:
+    rule: longest_non_null
+  contactName:
+    rule: longest_non_null
+  phone:
+    rule: longest_non_null
+  address:
+    rule: longest_non_null
+  city:
+    rule: longest_non_null
+  country:
+    rule: longest_non_null
+  postalCode:
+    rule: longest_non_null
+
+employees:
+  title:
+    rule: longest_non_null
+  city:
+    rule: longest_non_null
+  country:
+    rule: longest_non_null
+
+suppliers:
+  companyName:
+    rule: longest_non_null
+  phone:
+    rule: longest_non_null
+  city:
+    rule: longest_non_null
+  country:
+    rule: longest_non_null
+
+products:
+  productName:
+    rule: longest_non_null
+  unitPrice:
+    rule: most_recent
+
+# Fallback: applied to any column not explicitly listed above.
+default:
+  _default:
+    rule: longest_non_null
