@@ -74,7 +74,7 @@ services:
           --username ${AIRFLOW_ADMIN_USER} \
           --password ${AIRFLOW_ADMIN_PASSWORD} \
           --firstname Admin --lastname User \
-          --role Admin --email admin@etl.local || true
+          --role Admin --email ${AIRFLOW_ADMIN_EMAIL} || true
     restart: "no"
 
   airflow-webserver:
