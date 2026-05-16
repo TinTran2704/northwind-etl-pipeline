@@ -9,7 +9,9 @@
       "Bash(/c/Users/ADMIN/anaconda3/python.exe --version)",
       "Bash(/c/Users/ADMIN/anaconda3/python.exe -c \"import pandas, sqlalchemy, jellyfish, pyarrow; print\\('OK'\\)\")",
       "Bash(/c/Users/ADMIN/anaconda3/python.exe -c \"import pandas, sqlalchemy, pyarrow; print\\('OK'\\)\")",
-      "Bash(/c/Users/ADMIN/anaconda3/python.exe -m pip install jellyfish pyyaml tenacity requests)"
+      "Bash(/c/Users/ADMIN/anaconda3/python.exe -m pip install jellyfish pyyaml tenacity requests)",
+      "Bash(.venv/Scripts/python.exe -m src.orchestration.pipeline run)",
+      "Bash(docker exec *)"
     ]
   }
 }
