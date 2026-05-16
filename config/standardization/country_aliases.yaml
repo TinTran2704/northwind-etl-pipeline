@@ -16,7 +16,7 @@ country_aliases:
   Belgium: BE
   Finland: FI
   Italy: IT
-  Norway: NO
+  Norway: "NO"
   Portugal: PT
   Denmark: DK
   Ireland: IE
@@ -26,6 +26,10 @@ country_aliases:
   Netherlands: NL
   USA: US
   UK: GB
+
+  Japan: JP
+  Australia: AU
+  Singapore: SG
 
   # Common aliases / abbreviations
   United States: US
@@ -122,7 +126,7 @@ country_info:
     region: Europe
     subregion: Western Europe
     primary_currency: EUR
-  NO:
+  "NO":
     country_name: Norway
     region: Europe
     subregion: Northern Europe
@@ -152,3 +156,18 @@ country_info:
     region: Americas
     subregion: South America
     primary_currency: VES
+  JP:
+    country_name: Japan
+    region: Asia
+    subregion: Eastern Asia
+    primary_currency: JPY
+  AU:
+    country_name: Australia
+    region: Oceania
+    subregion: Australia and New Zealand
+    primary_currency: AUD
+  SG:
+    country_name: Singapore
+    region: Asia
+    subregion: South-Eastern Asia
+    primary_currency: SGD
