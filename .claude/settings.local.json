@@ -3,7 +3,13 @@
     "allow": [
       "PowerShell(Get-ChildItem -Path \"c:\\\\TinTran\\\\Project\\\\northwind-etl-pipeline\" -Recurse -Name | Where-Object { $_ -notmatch \"\\\\.git\" } | Sort-Object)",
       "PowerShell(Get-ChildItem -Path \"c:\\\\TinTran\\\\Project\\\\northwind-etl-pipeline\" -Exclude \".venv\",\".git\" | ForEach-Object { $_.Name })",
-      "Bash(py --version)"
+      "Bash(py --version)",
+      "Bash(ls /c/Users/ADMIN/.virtualenvs/ 2>/dev/null || ls /mnt/c/Users/ADMIN/ 2>/dev/null | head -20)",
+      "Read(//mnt/c/Users/**)",
+      "Bash(/c/Users/ADMIN/anaconda3/python.exe --version)",
+      "Bash(/c/Users/ADMIN/anaconda3/python.exe -c \"import pandas, sqlalchemy, jellyfish, pyarrow; print\\('OK'\\)\")",
+      "Bash(/c/Users/ADMIN/anaconda3/python.exe -c \"import pandas, sqlalchemy, pyarrow; print\\('OK'\\)\")",
+      "Bash(/c/Users/ADMIN/anaconda3/python.exe -m pip install jellyfish pyyaml tenacity requests)"
     ]
   }
 }
