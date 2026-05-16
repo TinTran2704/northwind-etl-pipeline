@@ -5,7 +5,7 @@
 sources:
   northwind:
     type: http_csv
-    base_url: "https://raw.githubusercontent.com/graphql-compose/graphql-compose-examples/master/examples/northwind/data/csv"
+    base_url: "https://data.neo4j.com/northwind"
     files:
       - customers.csv
       - orders.csv

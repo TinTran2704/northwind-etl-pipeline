@@ -11,7 +11,8 @@
       "Bash(/c/Users/ADMIN/anaconda3/python.exe -c \"import pandas, sqlalchemy, pyarrow; print\\('OK'\\)\")",
       "Bash(/c/Users/ADMIN/anaconda3/python.exe -m pip install jellyfish pyyaml tenacity requests)",
       "Bash(.venv/Scripts/python.exe -m src.orchestration.pipeline run)",
-      "Bash(docker exec *)"
+      "Bash(docker exec *)",
+      "Bash(.venv/Scripts/python.exe scripts/verify_sources.py)"
     ]
   }
 }
