@@ -255,6 +255,10 @@ class Pipeline:
         total_rows = 0
         details: dict[str, Any] = {}
 
+        # One fixed timestamp for the whole batch — all files share the same
+        # snapshot directory so _find_latest_raw() returns a complete set.
+        batch_ts = datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M%S")
+
         def _do_extract() -> dict:
             nonlocal total_rows
             for src_name, src_cfg in sources_conf.get("sources", {}).items():
@@ -263,8 +267,9 @@ class Pipeline:
 
                 if src_type == "http_csv":
                     base_url = src_cfg["base_url"]
-                    snapshot_dir = target / datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M%S")
-                    snapshot_dir.mkdir(parents=True, exist_ok=True)
+                    # Pre-create the shared snapshot dir for this batch
+                    batch_snapshot_dir = target / batch_ts
+                    batch_snapshot_dir.mkdir(parents=True, exist_ok=True)
                     for fname in src_cfg.get("files", []):
                         ext = HttpCsvExtractor(
                             source_name=src_name,
@@ -272,6 +277,8 @@ class Pipeline:
                             file_name=fname.rsplit(".", 1)[0],
                             target_dir=target,
                         )
+                        # Force all files into the same batch snapshot directory
+                        ext.get_snapshot_path = lambda _d=batch_snapshot_dir: _d
                         try:
                             r = ext.extract()
                             total_rows += r.row_count

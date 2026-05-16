@@ -136,7 +136,7 @@ class DimBuilder:
             df["region_name"] = None
 
         # SCD columns (set by conform pipeline; default if missing)
-        today = str(date.today())
+        today = str(date(1900, 1, 1))
         if "effective_date" not in df.columns:
             df["effective_date"] = today
         if "expiration_date" not in df.columns:
@@ -466,16 +466,63 @@ def _ensure_etl_run(batch_id: str, engine: Engine) -> None:
 
 
 def _seed_unknown_members(engine: Engine) -> None:
-    """Insert audit_sk=-1 unknown member row if it doesn't exist.
+    """Insert unknown member rows (sk=-1) into all dimension tables.
 
-    All dimension tables reference audit_sk=-1 as a placeholder.
-    This must be present in dim_audit before any FK-constrained dims load.
+    fact_sales FK constraints reference sk=-1 as a placeholder for unresolved
+    natural keys. These rows must exist before any fact rows are loaded.
     """
-    with engine.begin() as conn:
-        conn.execute(text("""
+    stmts = [
+        # dim_audit must come first (other dims FK to it)
+        text("""
             INSERT INTO warehouse.dim_audit
                 (audit_sk, etl_batch_id, source_system, source_file,
                  extract_row_count, reject_row_count, quality_score, has_anomalies)
             VALUES (-1, NULL, 'UNKNOWN', 'UNKNOWN', 0, 0, 1.0, FALSE)
             ON CONFLICT (audit_sk) DO NOTHING
-        """))
+        """),
+        text("""
+            INSERT INTO warehouse.dim_geography
+                (geography_sk, country_code, country_name, region, subregion, primary_currency)
+            VALUES (-1, 'ZZ', 'Unknown', 'Unknown', 'Unknown', 'ZZZ')
+            ON CONFLICT (geography_sk) DO NOTHING
+        """),
+        text("""
+            INSERT INTO warehouse.dim_customer
+                (customer_sk, customer_nk, company_name, contact_name, contact_title,
+                 address, city, postal_code, phone, country_code,
+                 effective_date, expiration_date, is_current, region_name, audit_sk)
+            VALUES (-1, 'UNKNOWN', 'Unknown', NULL, NULL,
+                    NULL, NULL, NULL, NULL, 'ZZ',
+                    '1900-01-01', NULL, TRUE, NULL, -1)
+            ON CONFLICT (customer_sk) DO NOTHING
+        """),
+        text("""
+            INSERT INTO warehouse.dim_product
+                (product_sk, product_nk, product_name, category_name, supplier_name,
+                 supplier_country, quantity_per_unit,
+                 unit_price, units_in_stock, discontinued,
+                 effective_date, expiration_date, is_current, audit_sk)
+            VALUES (-1, -1, 'Unknown', NULL, NULL,
+                    NULL, NULL,
+                    0, 0, FALSE,
+                    '1900-01-01', NULL, TRUE, -1)
+            ON CONFLICT (product_sk) DO NOTHING
+        """),
+        text("""
+            INSERT INTO warehouse.dim_employee
+                (employee_sk, employee_nk, full_name, title, city, country_code,
+                 reports_to_nk, effective_date, expiration_date, is_current, audit_sk)
+            VALUES (-1, -1, 'Unknown', NULL, NULL, 'ZZ',
+                    NULL, '1900-01-01', NULL, TRUE, -1)
+            ON CONFLICT (employee_sk) DO NOTHING
+        """),
+        text("""
+            INSERT INTO warehouse.dim_shipper
+                (shipper_sk, shipper_nk, company_name, phone, audit_sk)
+            VALUES (-1, -1, 'Unknown', NULL, -1)
+            ON CONFLICT (shipper_sk) DO NOTHING
+        """),
+    ]
+    with engine.begin() as conn:
+        for stmt in stmts:
+            conn.execute(stmt)
