@@ -360,6 +360,9 @@ class DimBuilder:
         # Ensure metadata.etl_runs record exists (required by dim_audit FK)
         _ensure_etl_run(batch_id, engine)
 
+        # 0. Seed unknown members (audit_sk=-1 must exist before FK dims load)
+        _seed_unknown_members(engine)
+
         # 1. dim_date (includes Unknown date row for unshipped/null dates)
         logger.info("[DELIVER] batch=%s building dim_date", batch_id)
         date_df = self.build_dim_date()
@@ -460,3 +463,19 @@ def _ensure_etl_run(batch_id: str, engine: Engine) -> None:
             VALUES (:batch_id, 'RUNNING')
             ON CONFLICT (batch_id) DO NOTHING
         """), {"batch_id": batch_id})
+
+
+def _seed_unknown_members(engine: Engine) -> None:
+    """Insert audit_sk=-1 unknown member row if it doesn't exist.
+
+    All dimension tables reference audit_sk=-1 as a placeholder.
+    This must be present in dim_audit before any FK-constrained dims load.
+    """
+    with engine.begin() as conn:
+        conn.execute(text("""
+            INSERT INTO warehouse.dim_audit
+                (audit_sk, etl_batch_id, source_system, source_file,
+                 extract_row_count, reject_row_count, quality_score, has_anomalies)
+            VALUES (-1, NULL, 'UNKNOWN', 'UNKNOWN', 0, 0, 1.0, FALSE)
+            ON CONFLICT (audit_sk) DO NOTHING
+        """))
