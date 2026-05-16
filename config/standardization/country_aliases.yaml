@@ -1,0 +1,154 @@
+# Country aliases: map any name variant → ISO 3166-1 alpha-2 code.
+# Also covers Northwind canonical names directly.
+# Used by Standardizer.standardize_country().
+
+country_aliases:
+  # Northwind canonical names
+  Germany: DE
+  France: FR
+  Brazil: BR
+  Mexico: MX
+  Canada: CA
+  Sweden: SE
+  Spain: ES
+  Switzerland: CH
+  Austria: AT
+  Belgium: BE
+  Finland: FI
+  Italy: IT
+  Norway: NO
+  Portugal: PT
+  Denmark: DK
+  Ireland: IE
+  Argentina: AR
+  Venezuela: VE
+  Poland: PL
+  Netherlands: NL
+  USA: US
+  UK: GB
+
+  # Common aliases / abbreviations
+  United States: US
+  United Kingdom: GB
+  Great Britain: GB
+  Brasil: BR
+  Holland: NL
+  Schweiz: CH
+  Österreich: AT
+  Deutschland: DE
+  Allemagne: DE
+  Espagne: ES
+  Suisse: CH
+
+# Geographic metadata per ISO code — used to build dim_geography.
+country_info:
+  AR:
+    country_name: Argentina
+    region: Americas
+    subregion: South America
+    primary_currency: ARS
+  AT:
+    country_name: Austria
+    region: Europe
+    subregion: Central Europe
+    primary_currency: EUR
+  BE:
+    country_name: Belgium
+    region: Europe
+    subregion: Western Europe
+    primary_currency: EUR
+  BR:
+    country_name: Brazil
+    region: Americas
+    subregion: South America
+    primary_currency: BRL
+  CA:
+    country_name: Canada
+    region: Americas
+    subregion: Northern America
+    primary_currency: CAD
+  CH:
+    country_name: Switzerland
+    region: Europe
+    subregion: Central Europe
+    primary_currency: CHF
+  DE:
+    country_name: Germany
+    region: Europe
+    subregion: Western Europe
+    primary_currency: EUR
+  DK:
+    country_name: Denmark
+    region: Europe
+    subregion: Northern Europe
+    primary_currency: DKK
+  ES:
+    country_name: Spain
+    region: Europe
+    subregion: Southern Europe
+    primary_currency: EUR
+  FI:
+    country_name: Finland
+    region: Europe
+    subregion: Northern Europe
+    primary_currency: EUR
+  FR:
+    country_name: France
+    region: Europe
+    subregion: Western Europe
+    primary_currency: EUR
+  GB:
+    country_name: United Kingdom
+    region: Europe
+    subregion: Northern Europe
+    primary_currency: GBP
+  IE:
+    country_name: Ireland
+    region: Europe
+    subregion: Northern Europe
+    primary_currency: EUR
+  IT:
+    country_name: Italy
+    region: Europe
+    subregion: Southern Europe
+    primary_currency: EUR
+  MX:
+    country_name: Mexico
+    region: Americas
+    subregion: Central America
+    primary_currency: MXN
+  NL:
+    country_name: Netherlands
+    region: Europe
+    subregion: Western Europe
+    primary_currency: EUR
+  NO:
+    country_name: Norway
+    region: Europe
+    subregion: Northern Europe
+    primary_currency: NOK
+  PL:
+    country_name: Poland
+    region: Europe
+    subregion: Eastern Europe
+    primary_currency: PLN
+  PT:
+    country_name: Portugal
+    region: Europe
+    subregion: Southern Europe
+    primary_currency: EUR
+  SE:
+    country_name: Sweden
+    region: Europe
+    subregion: Northern Europe
+    primary_currency: SEK
+  US:
+    country_name: United States
+    region: Americas
+    subregion: Northern America
+    primary_currency: USD
+  VE:
+    country_name: Venezuela
+    region: Americas
+    subregion: South America
+    primary_currency: VES
