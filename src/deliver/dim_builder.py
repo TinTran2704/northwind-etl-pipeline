@@ -235,7 +235,7 @@ class DimBuilder:
             "employee_nk":    pd.to_numeric(df["employeeID"], errors="coerce"),
             "full_name":      df.apply(_full_name, axis=1),
             "title":          df.get("title", pd.Series(dtype=str)).where(df.get("title", pd.Series(dtype=str)) != "NULL", None),
-            "reports_to_nk":  pd.to_numeric(df.get("reportsTo", pd.Series(dtype=str)), errors="coerce"),
+            "reports_to_nk":  pd.to_numeric(df.get("reportsTo", pd.Series(dtype=str)), errors="coerce").astype("Int64"),
             "hire_date":      pd.to_datetime(df.get("hireDate", pd.Series(dtype=str)), errors="coerce").dt.date,
             "city":           df.get("city", pd.Series(dtype=str)).apply(self._std.title_case),
             "country_code":   df.get("country", pd.Series(dtype=str)).apply(self._std.standardize_country),
@@ -310,6 +310,11 @@ class DimBuilder:
         """)
 
         rows = df.where(pd.notna(df), None).to_dict(orient="records")
+        # pd.NA from nullable integer types is not None — normalize to None
+        for row in rows:
+            for k, v in row.items():
+                if v is pd.NA or (isinstance(v, float) and pd.isna(v)):
+                    row[k] = None
         with engine.begin() as conn:
             conn.execute(sql, rows)
             # Update BIGSERIAL sequence so auto-inserts don't collide (skip for plain INT PKs)
@@ -355,9 +360,17 @@ class DimBuilder:
         # Ensure metadata.etl_runs record exists (required by dim_audit FK)
         _ensure_etl_run(batch_id, engine)
 
-        # 1. dim_date
+        # 1. dim_date (includes Unknown date row for unshipped/null dates)
         logger.info("[DELIVER] batch=%s building dim_date", batch_id)
         date_df = self.build_dim_date()
+        unknown_date = pd.DataFrame([{
+            "date_sk": 19000101, "full_date": date(1900, 1, 1),
+            "day_of_week": 0, "day_name": "Unknown", "day_of_month": 1,
+            "day_of_year": 1, "week_of_year": 1, "month": 0,
+            "month_name": "Unknown", "quarter": 0, "year": 1900,
+            "is_weekend": False, "fiscal_year": 1900, "fiscal_quarter": 0,
+        }])
+        date_df = pd.concat([unknown_date, date_df], ignore_index=True)
         loaded["dim_date"] = self.load_dim_to_postgres("dim_date", date_df, engine, pk_col="date_sk")
 
         # 2. dim_geography
