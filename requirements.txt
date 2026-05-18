@@ -39,6 +39,10 @@ pytest-cov==5.0.0
 responses==0.25.3           # Mock HTTP requests in tests
 requests-mock==1.12.1
 
+# ── Streaming (Phase 2 — Kafka) ──────────────────────────────
+confluent-kafka==2.4.0
+kafka-python==2.0.2
+
 # ── Development ──────────────────────────────────────────────
 ipython==8.25.0
 jupyterlab==4.2.2           # Optional: notebook exploration

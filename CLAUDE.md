@@ -13,6 +13,7 @@
 - requests + tenacity (extract)
 - jellyfish (fuzzy matching)
 - pyyaml (config)
+- Apache Kafka (cho streaming ingestion, phase 2)
 
 ## ⚠️ Quy tắc tuyệt đối
 
