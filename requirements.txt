@@ -43,6 +43,10 @@ requests-mock==1.12.1
 confluent-kafka==2.4.0
 kafka-python==2.0.2
 
+# ── Big Data Transform (Phase 2 — Spark) ─────────────────────
+pyspark==3.5.1
+pytest-spark==0.6.0
+
 # ── Development ──────────────────────────────────────────────
 ipython==8.25.0
 jupyterlab==4.2.2           # Optional: notebook exploration
