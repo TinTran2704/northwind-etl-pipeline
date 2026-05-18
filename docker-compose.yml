@@ -139,6 +139,43 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
     networks: [etl_net]
 
+  # ── Spark Master ─────────────────────────────────────────────
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: etl_spark_master
+    restart: unless-stopped
+    environment:
+      SPARK_MODE: master
+      SPARK_RPC_AUTHENTICATION_ENABLED: "no"
+      SPARK_RPC_ENCRYPTION_ENABLED: "no"
+    ports:
+      - "8082:8080"   # Spark UI
+      - "7077:7077"   # Spark master port
+    volumes:
+      - ./src:/opt/etl/src
+      - ./data:/opt/etl/data
+      - ./config:/opt/etl/config
+      - ./config/spark/jars:/opt/spark/jars
+    networks: [etl_net]
+
+  # ── Spark Worker ─────────────────────────────────────────────
+  spark-worker:
+    image: bitnami/spark:3.5
+    container_name: etl_spark_worker
+    restart: unless-stopped
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_WORKER_MEMORY: 2G
+      SPARK_WORKER_CORES: 2
+    volumes:
+      - ./src:/opt/etl/src
+      - ./data:/opt/etl/data
+      - ./config:/opt/etl/config
+      - ./config/spark/jars:/opt/spark/jars
+    depends_on: [spark-master]
+    networks: [etl_net]
+
 volumes:
   pg_data:
     name: etl_pg_data
