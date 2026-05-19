@@ -10,6 +10,7 @@ version: "3.9"
 x-airflow-common: &airflow-common
   image: apache/airflow:2.9.2
   environment: &airflow-env
+    _PIP_ADDITIONAL_REQUIREMENTS: "confluent-kafka==2.4.0 pandas==2.2.2 pyarrow==16.1.0"
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:${AIRFLOW_DB_PASSWORD}@postgres:5432/airflow
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
@@ -22,6 +23,7 @@ x-airflow-common: &airflow-common
     ETL_DW_PASSWORD: ${ETL_DW_PASSWORD}
     ETL_DW_DATABASE: ${ETL_DW_DATABASE}
     PYTHONPATH: /opt/etl
+    ETL_DATA_DIR: /opt/etl/data
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
