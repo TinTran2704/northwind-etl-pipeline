@@ -187,3 +187,5 @@ Trước khi báo "done":
 - [ ] Không hardcode
 - [ ] Đã log đủ thông tin
 - [ ] Doc đã update (nếu có thay đổi spec)
+- [ ] DAGs load không lỗi trong Airflow UI (kiểm tra `airflow dags list` trong container)
+- [ ] Streaming pipeline E2E pass (producer published → consumer wrote parquet → verify row count)
