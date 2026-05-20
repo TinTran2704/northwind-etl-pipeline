@@ -47,6 +47,10 @@ kafka-python==2.0.2
 pyspark==3.5.1
 pytest-spark==0.6.0
 
+# ── Semantic Layer (Phase 3 — dbt) ───────────────────────────
+dbt-core==1.8.2
+dbt-postgres==1.8.2
+
 # ── Development ──────────────────────────────────────────────
 ipython==8.25.0
 jupyterlab==4.2.2           # Optional: notebook exploration
