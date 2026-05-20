@@ -1,0 +1,26 @@
+northwind_dw:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('ETL_DW_HOST', 'localhost') }}"
+      port: "{{ env_var('ETL_DW_PORT', '5432') | int }}"
+      user: "{{ env_var('ETL_DW_USER', 'etl_user') }}"
+      password: "{{ env_var('ETL_DW_PASSWORD', '') }}"
+      dbname: "{{ env_var('ETL_DW_DATABASE', 'northwind_dw') }}"
+      schema: warehouse
+      threads: 4
+      keepalives_idle: 0
+      connect_timeout: 10
+
+    prod:
+      type: postgres
+      host: "{{ env_var('ETL_DW_HOST', 'localhost') }}"
+      port: "{{ env_var('ETL_DW_PORT', '5432') | int }}"
+      user: "{{ env_var('ETL_DW_USER', 'etl_user') }}"
+      password: "{{ env_var('ETL_DW_PASSWORD', '') }}"
+      dbname: "{{ env_var('ETL_DW_DATABASE', 'northwind_dw') }}"
+      schema: warehouse
+      threads: 8
+      keepalives_idle: 0
+      connect_timeout: 10
