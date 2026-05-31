@@ -22,15 +22,15 @@ clean-targets:
 models:
   northwind_dw:
     staging:
-      +schema: staging
+      +schema: analytics_staging
       +materialized: view
       +tags: ["staging"]
     intermediate:
-      +schema: intermediate
+      +schema: analytics_intermediate
       +materialized: view
       +tags: ["intermediate"]
     marts:
-      +schema: warehouse
+      +schema: analytics_marts
       +materialized: table
       +tags: ["marts"]
 
