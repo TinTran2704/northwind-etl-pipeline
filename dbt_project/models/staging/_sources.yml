@@ -1,0 +1,113 @@
+version: 2
+
+sources:
+  - name: warehouse
+    schema: warehouse
+    database: northwind_dw
+    description: >
+      Kimball dimensional warehouse tables produced by the Phase 1-2 ETL pipeline.
+      All dims follow SCD Type 2 (effective_date / expiration_date / is_current).
+      Unknown members have surrogate key = -1.
+
+    tables:
+      - name: dim_customer
+        description: "SCD Type 2 customer dimension. Unknown member: customer_sk = -1."
+        columns:
+          - name: customer_sk
+            description: "Surrogate key (bigint, auto-increment). -1 = Unknown member."
+            tests: [unique, not_null]
+          - name: customer_nk
+            description: "Natural key — Northwind CustomerID (e.g. ALFKI)."
+            tests: [not_null]
+          - name: is_current
+            tests: [not_null]
+
+      - name: dim_product
+        description: "SCD Type 2 product dimension. Unknown member: product_sk = -1."
+        columns:
+          - name: product_sk
+            tests: [unique, not_null]
+          - name: product_nk
+            tests: [not_null]
+          - name: is_current
+            tests: [not_null]
+
+      - name: dim_employee
+        description: "SCD Type 2 employee dimension. Unknown member: employee_sk = -1."
+        columns:
+          - name: employee_sk
+            tests: [unique, not_null]
+          - name: employee_nk
+            tests: [not_null]
+          - name: is_current
+            tests: [not_null]
+
+      - name: dim_shipper
+        description: "Shipper dimension (Type 1 — no history). Unknown member: shipper_sk = -1."
+        columns:
+          - name: shipper_sk
+            tests: [unique, not_null]
+          - name: shipper_nk
+            tests: [not_null]
+
+      - name: dim_geography
+        description: "ISO country reference dimension. Unknown member: country_code = 'ZZ'."
+        columns:
+          - name: geography_sk
+            tests: [unique, not_null]
+          - name: country_code
+            tests: [unique, not_null]
+
+      - name: dim_date
+        description: "Date dimension (date_sk = YYYYMMDD integer). Sentinel: 19000101."
+        columns:
+          - name: date_sk
+            tests: [unique, not_null]
+          - name: full_date
+            tests: [unique, not_null]
+
+      - name: fact_sales
+        description: >
+          Grain: one row per order line (order_id + line_number).
+          All foreign keys reference warehouse dims.
+        columns:
+          - name: order_id
+            tests: [not_null]
+          - name: line_number
+            tests: [not_null]
+          - name: customer_sk
+            tests:
+              - not_null
+              - relationships:
+                  to: source('warehouse', 'dim_customer')
+                  field: customer_sk
+          - name: product_sk
+            tests:
+              - not_null
+              - relationships:
+                  to: source('warehouse', 'dim_product')
+                  field: product_sk
+          - name: employee_sk
+            tests:
+              - not_null
+              - relationships:
+                  to: source('warehouse', 'dim_employee')
+                  field: employee_sk
+          - name: shipper_sk
+            tests:
+              - not_null
+              - relationships:
+                  to: source('warehouse', 'dim_shipper')
+                  field: shipper_sk
+          - name: ship_geography_sk
+            tests:
+              - not_null
+              - relationships:
+                  to: source('warehouse', 'dim_geography')
+                  field: geography_sk
+          - name: order_date_sk
+            tests:
+              - not_null
+              - relationships:
+                  to: source('warehouse', 'dim_date')
+                  field: date_sk
