@@ -1,0 +1,117 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: >
+      Active, current-version customers. Excludes the Unknown member (sk = -1)
+      and historical SCD2 rows. Renames customer_nk → customer_code.
+    columns:
+      - name: customer_sk
+        description: "Surrogate key inherited from dim_customer."
+        tests: [unique, not_null]
+      - name: customer_code
+        description: "Natural key (Northwind CustomerID, e.g. ALFKI)."
+        tests: [unique, not_null]
+      - name: company_name
+        tests: [not_null]
+      - name: country_code
+        description: "ISO-3166 alpha-2. Must exist in stg_geography."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_geography')
+              field: country_code
+      - name: is_current
+        tests: [not_null]
+
+  - name: stg_products
+    description: >
+      Active, current-version products. Excludes the Unknown member (sk = -1)
+      and historical SCD2 rows. Renames product_nk → product_code.
+    columns:
+      - name: product_sk
+        tests: [unique, not_null]
+      - name: product_code
+        description: "Natural key (Northwind ProductID integer)."
+        tests: [unique, not_null]
+      - name: product_name
+        tests: [not_null]
+      - name: unit_price
+        tests: [not_null]
+
+  - name: stg_employees
+    description: >
+      Active, current-version employees. Excludes the Unknown member (sk = -1)
+      and historical SCD2 rows. Renames employee_nk → employee_code.
+    columns:
+      - name: employee_sk
+        tests: [unique, not_null]
+      - name: employee_code
+        description: "Natural key (Northwind EmployeeID integer)."
+        tests: [unique, not_null]
+      - name: full_name
+        tests: [not_null]
+
+  - name: stg_shippers
+    description: >
+      Shippers dimension, excluding the Unknown member (sk = -1).
+      Renames shipper_nk → shipper_code.
+    columns:
+      - name: shipper_sk
+        tests: [unique, not_null]
+      - name: shipper_code
+        description: "Natural key (Northwind ShipVia integer)."
+        tests: [unique, not_null]
+      - name: company_name
+        tests: [not_null]
+
+  - name: stg_geography
+    description: >
+      ISO country reference. Excludes the Unknown member (country_code = 'ZZ').
+    columns:
+      - name: geography_sk
+        tests: [unique, not_null]
+      - name: country_code
+        description: "ISO-3166 alpha-2 code. Primary key for geography joins."
+        tests: [unique, not_null]
+      - name: country_name
+        tests: [not_null]
+
+  - name: stg_dates
+    description: >
+      Date dimension. Excludes the sentinel row (date_sk = 19000101)
+      used for NULL/unknown dates.
+    columns:
+      - name: date_sk
+        description: "Integer surrogate key in YYYYMMDD format."
+        tests: [unique, not_null]
+      - name: full_date
+        tests: [unique, not_null]
+      - name: year
+        tests: [not_null]
+      - name: month
+        tests: [not_null]
+
+  - name: stg_sales
+    description: >
+      Sales fact table — grain: one row per order line (order_id + line_number).
+      No rows filtered; all FK references preserved for downstream joins.
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: line_number
+        tests: [not_null]
+      - name: quantity
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "quantity > 0"
+      - name: net_amount
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "net_amount > 0"
+      - name: customer_sk
+        tests: [not_null]
+      - name: product_sk
+        tests: [not_null]
