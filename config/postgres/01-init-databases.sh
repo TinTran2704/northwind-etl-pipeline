@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # ============================================================
 # Tự động chạy khi PostgreSQL khởi động LẦN ĐẦU
 # (Postgres scan /docker-entrypoint-initdb.d/ và chạy file *.sh, *.sql)
